@@ -18,6 +18,8 @@ DOWNLOADER_MIDDLEWARES = {
     #'twitterspider.middleware.ProxyMiddleware': 100,#代理中间件
     'tianyancha.middlewares.RotateUserAgentMiddleware': 200,#请求头中间件
     # 'twitterspider.middleware.CheckMiddleware': 300,#检测爬虫状态码,解决302重定向
+    'tianyancha.middlewares.JavaScriptMiddleware': 543,  # 键为中间件类的路径，值为中间件的顺序
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,  # 禁止内置的中间件
 }
 
 #数据库管道处理
