@@ -26,10 +26,13 @@ DOWNLOADER_MIDDLEWARES = {
 # ITEM_PIPELINES = {
 #     'twitterspider.pipelines.JsonWriterPipeline': 300
 # }
-#代理设置
-# PROXIES = [
-#     {'ip_port': '127.0.0.1:9999','user_pass':None},
-# ]
+# 代理设置
+PROXIES = [
+    # {'ip_port': '122.5.131.146:808','user_pass':''},
+    {'ip_port': '115.220.149.251:808','user_pass':''},
+    {'ip_port': '113.123.76.221:808','user_pass':''},
+    {'ip_port': '27.159.126.36:8118','user_pass':''},
+]
 
 # DEFAULT_REQUEST_HEADERS = {
 #     'Host': 'www.yz21.org',

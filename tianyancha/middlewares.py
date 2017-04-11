@@ -11,14 +11,33 @@ from scrapy.exceptions import NotConfigured
 from selenium import webdriver
 from scrapy.http import HtmlResponse
 import time
+import random
+from .settings import PROXIES
+import base64
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+class ProxyMiddleware(object):
+    def process_request(self, request, spider):
+        proxy = random.choice(PROXIES)
+        if proxy['user_pass'] is not None:
+            request.meta['proxy'] = "http://%s" % proxy['ip_port']
+            request.meta['proxy'] = "https://%s" % proxy['ip_port']
+            encoded_user_pass = base64.encodestring(proxy['user_pass'])
+            request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
+            print("**************ProxyMiddleware have pass************" + proxy['ip_port'])
+        else:
+            print("**************ProxyMiddleware no pass************" + proxy['ip_port'])
+            request.meta['proxy'] = "http://%s" % proxy['ip_port']
 
 class JavaScriptMiddleware(object):
     def process_request(self, request, spider):
+        print("PhantomJS is starting...")
+        driver = webdriver.PhantomJS() #指定使用的浏览器
+        driver.get(request.url)
         if spider.name == "get_detail":
-            print("PhantomJS is starting...")
-            driver = webdriver.PhantomJS() #指定使用的浏览器
             # driver = webdriver.Firefox()
-            driver.get(request.url)
             time.sleep(1)
             js = "var q=document.documentElement.scrollTop=10000"
             driver.execute_script(js) #可执行js，模仿用户操作。此处为将页面拉至最底端。
@@ -26,8 +45,16 @@ class JavaScriptMiddleware(object):
             body = driver.page_source
             print("访问"+request.url)
             return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
-        else:
-            return
+        elif spider.name == 'get_company':
+            try:
+                element = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CLASS_NAME, 'col-xs-10 search_repadding2 f18')))
+            finally:
+                # print(driver.find_element_by_xpath('//a[@class="query_name search-new-color"]/@href').text())
+                # driver.close()
+                body = driver.page_source
+                print("访问" + request.url)
+                return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
+
 
 class RotateUserAgentMiddleware(object):
     """Middleware used for rotating user-agent for each request"""
