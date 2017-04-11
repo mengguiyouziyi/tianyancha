@@ -15,7 +15,7 @@ SPIDER_MODULES = ['tianyancha.spiders']
 NEWSPIDER_MODULE = 'tianyancha.spiders'
 
 DOWNLOADER_MIDDLEWARES = {
-    #'twitterspider.middleware.ProxyMiddleware': 100,#代理中间件
+    'tianyancha.middlewares.ProxyMiddleware': 100,#代理中间件
     'tianyancha.middlewares.RotateUserAgentMiddleware': 200,#请求头中间件
     # 'twitterspider.middleware.CheckMiddleware': 300,#检测爬虫状态码,解决302重定向
     'tianyancha.middlewares.JavaScriptMiddleware': 543,  # 键为中间件类的路径，值为中间件的顺序
@@ -27,12 +27,12 @@ DOWNLOADER_MIDDLEWARES = {
 #     'twitterspider.pipelines.JsonWriterPipeline': 300
 # }
 # 代理设置
-PROXIES = [
-    # {'ip_port': '122.5.131.146:808','user_pass':''},
-    {'ip_port': '115.220.149.251:808','user_pass':''},
-    {'ip_port': '113.123.76.221:808','user_pass':''},
-    {'ip_port': '27.159.126.36:8118','user_pass':''},
-]
+# PROXIES = [
+#     {'ip_port': '122.5.131.146:808','user_pass':''},
+#     {'ip_port': '115.220.149.251:808','user_pass':''},
+#     {'ip_port': '113.123.76.221:808','user_pass':''},
+#     {'ip_port': '27.159.126.36:8118','user_pass':''},
+# ]
 
 # DEFAULT_REQUEST_HEADERS = {
 #     'Host': 'www.yz21.org',

@@ -12,24 +12,48 @@ from selenium import webdriver
 from scrapy.http import HtmlResponse
 import time
 import random
-from .settings import PROXIES
+# from .settings import PROXIES
 import base64
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import codecs
+import os
 
 class ProxyMiddleware(object):
+    def __init__(self):
+        self.proxys = []
+        ip_path = os.path.join(os.getcwd(), 'ip_list.txt')
+        with codecs.open(ip_path, 'r', 'utf-8') as f:
+            self.ip_list = f.readlines()
+            for ip in self.ip_list:
+                self.proxy = {'ip_port': str(ip).strip(),'user_pass':b''}
+                # print(self.proxy)
+                self.proxys.append(self.proxy)
+
     def process_request(self, request, spider):
-        proxy = random.choice(PROXIES)
-        if proxy['user_pass'] is not None:
-            request.meta['proxy'] = "http://%s" % proxy['ip_port']
-            request.meta['proxy'] = "https://%s" % proxy['ip_port']
-            encoded_user_pass = base64.encodestring(proxy['user_pass'])
-            request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
-            print("**************ProxyMiddleware have pass************" + proxy['ip_port'])
+        self.proxy = random.choice(self.proxys)
+        if self.proxy['user_pass'] is not None:
+            request.meta['proxy'] = "http://%s" % self.proxy['ip_port']
+            request.meta['proxy'] = "https://%s" % self.proxy['ip_port']
+            encoded_user_pass = base64.b64encode(self.proxy['user_pass'])
+            request.headers['Proxy-Authorization'] = b'Basic ' + encoded_user_pass
+            print("**************ProxyMiddleware have pass************" + self.proxy['ip_port'])
         else:
-            print("**************ProxyMiddleware no pass************" + proxy['ip_port'])
-            request.meta['proxy'] = "http://%s" % proxy['ip_port']
+            print("**************ProxyMiddleware no pass************" + self.proxy['ip_port'])
+            request.meta['proxy'] = "http://%s" % self.proxy['ip_port']
+
+    def process_response(self, request, response, spider):
+        response_status = response.status
+        request_url = request.url
+        if response_status == 200:
+            print('代理ip正常················')
+            return response
+        else:
+            print('代理ip不能用了··············')
+            self.proxys.pop(self.proxy)
+            self.process_request(self, request.replace(url=request_url), spider)
+
 
 class JavaScriptMiddleware(object):
     def process_request(self, request, spider):

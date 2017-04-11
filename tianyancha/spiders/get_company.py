@@ -35,12 +35,13 @@ class GetCompanySpider(CrawlSpider):
             # 'Referer': 'http://www.tianyancha.com/search?key=603208&checkFrom=searchBox',
             # 'Tyc-From': 'normal',
         }
-        url = 'http://www.tianyancha.com/search?key=603208&checkFrom=searchBox'
+        url = 'http://www.tianyancha.com/search?key=酒钢宏兴&checkFrom=searchBox'
         # url = 'http://www.tianyancha.com/v2/search/603208.json?'
         yield scrapy.FormRequest(url, headers=headers, callback=self.parse_item)
 
     def parse_item(self, response):
         self.logger.info(response.url)
-        self.logger.info(response.body_as_unicode())
-        with codecs.open('search603208.html', 'wb', 'utf-8') as file:
+        # self.logger.info(response.body_as_unicode())
+        print(response.xpath('//a[@class="query_name search-new-color"]/@href').extract())
+        with codecs.open('search酒钢宏兴.html', 'wb', 'utf-8') as file:
             file.writelines(response.body_as_unicode())
