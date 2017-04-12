@@ -46,10 +46,10 @@ class ProxyMiddleware(object):
         response_status = response.status
         request_url = request.url
         if response_status == 200:
-            print('代理ip正常················')
+            print(self.proxy['ip_port'] + '：代理ip正常················')
             return response
         else:
-            print('代理ip不能用了··············')
+            print(self.proxy['ip_port'] + '：代理ip不能用了··············')
             self.proxys.pop(self.proxy)
             self.process_request(self, request.replace(url=request_url), spider)
 
@@ -66,16 +66,18 @@ class JavaScriptMiddleware(object):
             driver.execute_script(js) #可执行js，模仿用户操作。此处为将页面拉至最底端。
             time.sleep(10)
             body = driver.page_source
-            print("访问"+request.url)
+            # print("访问"+request.url)
             return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
         elif spider.name == 'get_company':
             try:
-                element = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CLASS_NAME, 'col-xs-10 search_repadding2 f18')))
+                element = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.col-xs-10.search_repadding2.f18')))
+            except Exception as e:
+                print('没有找到元素或发生其他异常' + e)
             finally:
                 # print(driver.find_element_by_xpath('//a[@class="query_name search-new-color"]/@href').text())
                 # driver.close()
                 body = driver.page_source
-                print("访问" + request.url)
+                # print("访问" + request.url)
                 return HtmlResponse(driver.current_url, body=body, encoding='utf-8', request=request)
 
 

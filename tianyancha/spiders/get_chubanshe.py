@@ -6,11 +6,11 @@ import os
 
 
 class GetCompanySpider(CrawlSpider):
-    name = 'get_company'
+    name = 'get_chubanshe'
     allowed_domains = ['www.tianyancha.com']
 
     def __init__(self):
-        company_path = os.path.join(os.getcwd(), 'company_list.txt')
+        company_path = os.path.join(os.getcwd(), 'chubanshe.txt')
         with codecs.open(company_path, 'r', 'utf-8') as f:
             self.company_list = f.readlines()
 
@@ -37,18 +37,12 @@ class GetCompanySpider(CrawlSpider):
         # print('获取得到的公司url列表：' + str(company_url_list))
         if len(company_url_list) > 0:
             desired_url = company_url_list[0]
-            stock = response.xpath("//div[@class='add']/span/text()").extract()[0]
-            if '股票代码' == stock:
-                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' % desired_url)
-                with codecs.open('company_url_list.txt', 'ab', 'utf-8') as file:
-                    file.write(desired_url + '\n')
-            else:
-                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~首行非查询公司~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-                with codecs.open('fail.txt', 'ab', 'utf-8') as file:
-                    file.write(self.company + '\n')
+            print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%s~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' % desired_url)
+            with codecs.open('chubanshe_url_list.txt', 'ab', 'utf-8') as file:
+                file.write(desired_url + '\n')
         else:
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~获取查询列表为空~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-            with codecs.open('empty.txt', 'ab', 'utf-8') as file:
+            with codecs.open('chubanshe_empty.txt', 'ab', 'utf-8') as file:
                 file.write(self.company + '\n')
 
 
