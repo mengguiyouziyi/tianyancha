@@ -12,7 +12,6 @@ from selenium import webdriver
 from scrapy.http import HtmlResponse
 import time
 import random
-# from .settings import PROXIES
 import base64
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
